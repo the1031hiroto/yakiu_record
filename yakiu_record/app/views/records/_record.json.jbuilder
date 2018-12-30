@@ -1,0 +1,2 @@
+json.extract! record, :id, :game_id, :user_id, :plate_appearance, :at_bat, :one_base_hit, :two_base_hit, :three_base_hit, :home_run, :base_balls, :hit_by_pitch, :strike_out, :get_double_play, :sacrifice_fly, :sacrifice_hit, :stolen_base, :base_error, :runs_scored, :run_batted_in, :scoring_position, :caught_stealing, :ground_out, :fly_out, :created_at, :updated_at
+json.url record_url(record, format: :json)

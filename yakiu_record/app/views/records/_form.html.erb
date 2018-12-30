@@ -1,0 +1,127 @@
+<%= form_with(model: record, local: true) do |form| %>
+  <% if record.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(record.errors.count, "error") %> prohibited this record from being saved:</h2>
+
+      <ul>
+      <% record.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :game_id %>
+    <%= form.number_field :game_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :user_id %>
+    <%= form.number_field :user_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :plate_appearance %>
+    <%= form.number_field :plate_appearance %>
+  </div>
+
+  <div class="field">
+    <%= form.label :at_bat %>
+    <%= form.number_field :at_bat %>
+  </div>
+
+  <div class="field">
+    <%= form.label :one_base_hit %>
+    <%= form.number_field :one_base_hit %>
+  </div>
+
+  <div class="field">
+    <%= form.label :two_base_hit %>
+    <%= form.number_field :two_base_hit %>
+  </div>
+
+  <div class="field">
+    <%= form.label :three_base_hit %>
+    <%= form.number_field :three_base_hit %>
+  </div>
+
+  <div class="field">
+    <%= form.label :home_run %>
+    <%= form.number_field :home_run %>
+  </div>
+
+  <div class="field">
+    <%= form.label :base_balls %>
+    <%= form.number_field :base_balls %>
+  </div>
+
+  <div class="field">
+    <%= form.label :hit_by_pitch %>
+    <%= form.number_field :hit_by_pitch %>
+  </div>
+
+  <div class="field">
+    <%= form.label :strike_out %>
+    <%= form.number_field :strike_out %>
+  </div>
+
+  <div class="field">
+    <%= form.label :get_double_play %>
+    <%= form.number_field :get_double_play %>
+  </div>
+
+  <div class="field">
+    <%= form.label :sacrifice_fly %>
+    <%= form.number_field :sacrifice_fly %>
+  </div>
+
+  <div class="field">
+    <%= form.label :sacrifice_hit %>
+    <%= form.number_field :sacrifice_hit %>
+  </div>
+
+  <div class="field">
+    <%= form.label :stolen_base %>
+    <%= form.number_field :stolen_base %>
+  </div>
+
+  <div class="field">
+    <%= form.label :base_error %>
+    <%= form.number_field :base_error %>
+  </div>
+
+  <div class="field">
+    <%= form.label :runs_scored %>
+    <%= form.number_field :runs_scored %>
+  </div>
+
+  <div class="field">
+    <%= form.label :run_batted_in %>
+    <%= form.number_field :run_batted_in %>
+  </div>
+
+  <div class="field">
+    <%= form.label :scoring_position %>
+    <%= form.number_field :scoring_position %>
+  </div>
+
+  <div class="field">
+    <%= form.label :caught_stealing %>
+    <%= form.number_field :caught_stealing %>
+  </div>
+
+  <div class="field">
+    <%= form.label :ground_out %>
+    <%= form.number_field :ground_out %>
+  </div>
+
+  <div class="field">
+    <%= form.label :fly_out %>
+    <%= form.number_field :fly_out %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

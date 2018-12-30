@@ -1,0 +1,2 @@
+json.extract! statistic, :id, :game_id, :user_id, :plate_appearance, :at_bat, :one_base_hit, :two_base_hit, :three_base_hit, :home_run, :base_balls, :hit_by_pitch, :strike_out, :get_double_play, :sacrifice_fly, :sacrifice_hit, :stolen_base, :base_error, :total_bases, :average, :on_base_percentage, :slugging_percentage, :OPS, :stolen_base, :RISP_BA, :batting_eye, :XR27, :wOBA, :wRAA, :created_at, :updated_at
+json.url statistic_url(statistic, format: :json)

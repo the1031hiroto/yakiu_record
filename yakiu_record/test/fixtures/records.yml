@@ -1,0 +1,49 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  game_id: 1
+  user_id: 1
+  plate_appearance: 1
+  at_bat: 1
+  one_base_hit: 1
+  two_base_hit: 1
+  three_base_hit: 1
+  home_run: 1
+  base_balls: 1
+  hit_by_pitch: 1
+  strike_out: 1
+  get_double_play: 1
+  sacrifice_fly: 1
+  sacrifice_hit: 1
+  stolen_base: 1
+  base_error: 1
+  runs_scored: 1
+  run_batted_in: 1
+  scoring_position: 1
+  caught_stealing: 1
+  ground_out: 1
+  fly_out: 1
+
+two:
+  game_id: 1
+  user_id: 1
+  plate_appearance: 1
+  at_bat: 1
+  one_base_hit: 1
+  two_base_hit: 1
+  three_base_hit: 1
+  home_run: 1
+  base_balls: 1
+  hit_by_pitch: 1
+  strike_out: 1
+  get_double_play: 1
+  sacrifice_fly: 1
+  sacrifice_hit: 1
+  stolen_base: 1
+  base_error: 1
+  runs_scored: 1
+  run_batted_in: 1
+  scoring_position: 1
+  caught_stealing: 1
+  ground_out: 1
+  fly_out: 1

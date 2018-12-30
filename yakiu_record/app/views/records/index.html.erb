@@ -1,0 +1,69 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Records</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Game</th>
+      <th>User</th>
+      <th>Plate appearance</th>
+      <th>At bat</th>
+      <th>One base hit</th>
+      <th>Two base hit</th>
+      <th>Three base hit</th>
+      <th>Home run</th>
+      <th>Base balls</th>
+      <th>Hit by pitch</th>
+      <th>Strike out</th>
+      <th>Get double play</th>
+      <th>Sacrifice fly</th>
+      <th>Sacrifice hit</th>
+      <th>Stolen base</th>
+      <th>Base error</th>
+      <th>Runs scored</th>
+      <th>Run batted in</th>
+      <th>Scoring position</th>
+      <th>Caught stealing</th>
+      <th>Ground out</th>
+      <th>Fly out</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @records.each do |record| %>
+      <tr>
+        <td><%= record.game_id %></td>
+        <td><%= record.user_id %></td>
+        <td><%= record.plate_appearance %></td>
+        <td><%= record.at_bat %></td>
+        <td><%= record.one_base_hit %></td>
+        <td><%= record.two_base_hit %></td>
+        <td><%= record.three_base_hit %></td>
+        <td><%= record.home_run %></td>
+        <td><%= record.base_balls %></td>
+        <td><%= record.hit_by_pitch %></td>
+        <td><%= record.strike_out %></td>
+        <td><%= record.get_double_play %></td>
+        <td><%= record.sacrifice_fly %></td>
+        <td><%= record.sacrifice_hit %></td>
+        <td><%= record.stolen_base %></td>
+        <td><%= record.base_error %></td>
+        <td><%= record.runs_scored %></td>
+        <td><%= record.run_batted_in %></td>
+        <td><%= record.scoring_position %></td>
+        <td><%= record.caught_stealing %></td>
+        <td><%= record.ground_out %></td>
+        <td><%= record.fly_out %></td>
+        <td><%= link_to 'Show', record %></td>
+        <td><%= link_to 'Edit', edit_record_path(record) %></td>
+        <td><%= link_to 'Destroy', record, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Record', new_record_path %>
