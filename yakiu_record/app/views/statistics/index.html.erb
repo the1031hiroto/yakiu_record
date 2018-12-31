@@ -1,37 +1,35 @@
 <p id="notice"><%= notice %></p>
 
 <h1>Statistics</h1>
-
+<%= @test %>
 <table>
   <thead>
     <tr>
-      <th>Game</th>
       <th>User</th>
-      <th>Plate appearance</th>
-      <th>At bat</th>
-      <th>One base hit</th>
-      <th>Two base hit</th>
-      <th>Three base hit</th>
-      <th>Home run</th>
-      <th>Base balls</th>
-      <th>Hit by pitch</th>
-      <th>Strike out</th>
-      <th>Get double play</th>
-      <th>Sacrifice fly</th>
-      <th>Sacrifice hit</th>
-      <th>Stolen base</th>
-      <th>Base error</th>
-      <th>Total bases</th>
-      <th>Average</th>
-      <th>On base percentage</th>
-      <th>Slugging percentage</th>
-      <th>Ops</th>
-      <th>Stolen base</th>
-      <th>Risp ba</th>
-      <th>Batting eye</th>
-      <th>Xr27</th>
-      <th>Woba</th>
-      <th>Wraa</th>
+      <th>打数</th>
+      <th>1塁打</th>
+      <th>2塁打</th>
+      <th>3塁打</th>
+      <th>本塁打</th>
+      <th>四球</th>
+      <th>死球</th>
+      <th>三振</th>
+      <th>併殺打</th>
+      <th>犠飛</th>
+      <th>犠打</th>
+      <th>盗塁</th>
+      <th>失策出</th>
+      <th>塁打</th>
+      <th>打率</th>
+      <th>出塁率</th>
+      <th>長打率</th>
+      <th>OPS</th>
+<!--<th>得点圏打率</th>-->
+      <th>選球眼</th>
+      <th>XR</th>
+      <th>XR27</th>
+      <th>wOBA</th>
+      <th>wRAA</th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -39,9 +37,7 @@
   <tbody>
     <% @statistics.each do |statistic| %>
       <tr>
-        <td><%= statistic.game_id %></td>
         <td><%= statistic.user_id %></td>
-        <td><%= statistic.plate_appearance %></td>
         <td><%= statistic.at_bat %></td>
         <td><%= statistic.one_base_hit %></td>
         <td><%= statistic.two_base_hit %></td>
@@ -55,17 +51,29 @@
         <td><%= statistic.sacrifice_hit %></td>
         <td><%= statistic.stolen_base %></td>
         <td><%= statistic.base_error %></td>
+        <td><%= @total_bases %></td>
+        <td><%= @average.round(3) %></td>
+        <td><%= @on_base_percentage.round(3) %></td>
+        <td><%= @slugging_percentage.round(3) %></td>
+        <td><%= @OPS.round(3) %></td>
+        <td><%= @batting_eye.round(3) %></td>
+        <td><%= @xr.round(3) %></td>
+        <td><%= @xr27.round(3) %></td>
+        <td><%= @wOBA.round(3) %></td>
+<%
+=begin %>
         <td><%= statistic.total_bases %></td>
         <td><%= statistic.average %></td>
         <td><%= statistic.on_base_percentage %></td>
         <td><%= statistic.slugging_percentage %></td>
         <td><%= statistic.OPS %></td>
-        <td><%= statistic.stolen_base %></td>
         <td><%= statistic.RISP_BA %></td>
         <td><%= statistic.batting_eye %></td>
         <td><%= statistic.XR27 %></td>
         <td><%= statistic.wOBA %></td>
         <td><%= statistic.wRAA %></td>
+<%
+=end %>
         <td><%= link_to 'Show', statistic %></td>
         <td><%= link_to 'Edit', edit_statistic_path(statistic) %></td>
         <td><%= link_to 'Destroy', statistic, method: :delete, data: { confirm: 'Are you sure?' } %></td>

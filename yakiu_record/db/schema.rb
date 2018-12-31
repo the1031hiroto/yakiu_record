@@ -13,36 +13,36 @@
 ActiveRecord::Schema.define(version: 2018_12_30_110816) do
 
   create_table "records", force: :cascade do |t|
-    t.integer "game_id"
-    t.integer "user_id"
-    t.integer "plate_appearance"
-    t.integer "at_bat"
-    t.integer "one_base_hit"
-    t.integer "two_base_hit"
-    t.integer "three_base_hit"
-    t.integer "home_run"
-    t.integer "base_balls"
-    t.integer "hit_by_pitch"
-    t.integer "strike_out"
-    t.integer "get_double_play"
-    t.integer "sacrifice_fly"
-    t.integer "sacrifice_hit"
-    t.integer "stolen_base"
-    t.integer "base_error"
-    t.integer "runs_scored"
-    t.integer "run_batted_in"
-    t.integer "scoring_position"
-    t.integer "caught_stealing"
-    t.integer "ground_out"
-    t.integer "fly_out"
+    t.integer "game_id", null: false
+    t.integer "user_id", null: false
+    t.integer "plate_appearance", null: false
+    t.integer "at_bat", default: 0, null: false
+    t.integer "one_base_hit", default: 0, null: false
+    t.integer "two_base_hit", default: 0, null: false
+    t.integer "three_base_hit", default: 0, null: false
+    t.integer "home_run", default: 0, null: false
+    t.integer "base_balls", default: 0, null: false
+    t.integer "hit_by_pitch", default: 0, null: false
+    t.integer "strike_out", default: 0, null: false
+    t.integer "get_double_play", default: 0, null: false
+    t.integer "sacrifice_fly", default: 0, null: false
+    t.integer "sacrifice_hit", default: 0, null: false
+    t.integer "stolen_base", default: 0, null: false
+    t.integer "caught_stealing", default: 0, null: false
+    t.integer "base_error", default: 0, null: false
+    t.integer "runs_scored", default: 0, null: false
+    t.integer "run_batted_in", default: 0, null: false
+    t.integer "scoring_position", default: 0, null: false
+    t.integer "ground_out", default: 0, null: false
+    t.integer "fly_out", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "statistics", force: :cascade do |t|
-    t.integer "game_id"
-    t.integer "user_id"
-    t.integer "plate_appearance"
+    t.integer "game_id", null: false
+    t.integer "user_id", null: false
+    t.integer "plate_appearance", null: false
     t.integer "at_bat"
     t.integer "one_base_hit"
     t.integer "two_base_hit"
@@ -55,6 +55,7 @@ ActiveRecord::Schema.define(version: 2018_12_30_110816) do
     t.integer "sacrifice_fly"
     t.integer "sacrifice_hit"
     t.integer "stolen_base"
+    t.integer "caught_stealing"
     t.integer "base_error"
     t.integer "total_bases"
     t.integer "average"
