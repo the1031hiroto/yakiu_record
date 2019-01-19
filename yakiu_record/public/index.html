@@ -1,7 +1,7 @@
 
 <html>
         <head>
-        <title>Form test</title>
+        <title>Records test</title>
         <!--
         <meta name="viewport" content="width=device-width,initial-scale=1">
         -->
@@ -161,14 +161,41 @@
 
         function calculation(allData) {
             mainData = []
+            let statisticData = {
+                "試合": 0,
+                "打席数": 0,
+                "打数": 0,
+                "1塁打": 0,
+                "2塁打": 0,
+                "3塁打": 0,
+                "本塁打": 0,
+                "打点": 0,
+                "得点": 0,
+                "四球": 0,
+                "死球": 0,
+                "三振": 0,
+                "併殺打": 0,
+                "犠飛": 0,
+                "犠打": 0,
+                "盗塁": 0,
+                "牽制死": 0,
+                "失策出": 0,
+                "塁打数": 0,
+            }
             for (i in allData) {
-                for (a in allData[i].records) {
-                    if (a == "old") {
+                for (x in allData[i].records) {
+                    if (x == "old") {
                         mainData.push(allData[i].records["old"])
+                    }
+                    if (x != "old") {
+                        for (y in allData[i].records[x]) {
+                            statisticData[y] += allData[i].records[x][y]
+                        }
                     }
                 }
                 mainData[i]["選手名"] =　allData[i].user_infos["選手名"]
             }
+            console.log(statisticData)
             statistic(mainData)
             return mainData
         }
