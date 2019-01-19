@@ -1,0 +1,36 @@
+#demo .VueTables__columns-dropdown-wrapper {
+  display: flex;
+}
+#demo .pull-right>.dropdown-menu {
+  left: 0;
+  right: auto;
+}
+
+th {
+  background-color: #42b983;
+  color: white;
+  min-width: 9rem;
+  text-align: center;
+}
+td {
+  text-align: center;
+}
+
+/*tableの最左列固定*/
+th:first-child,
+td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 100;
+}
+tbody tr:nth-child(2n) td:first-child {
+  background: white;
+}
+tbody tr:nth-child(2n+1) td:first-child {
+  background: #f9f9f9;
+}
+.table-hover>tbody>tr:hover,
+.table-hover>tbody>tr:hover td,
+.table-hover>tbody>tr:active td {
+  background-color: #bfbaba;
+}
