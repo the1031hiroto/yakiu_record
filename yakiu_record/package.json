@@ -1,5 +1,7 @@
 {
   "name": "yakiu_record",
   "private": true,
-  "dependencies": {}
+  "dependencies": {
+    "bootstrap-sass": "^3.4.0"
+  }
 }

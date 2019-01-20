@@ -50,33 +50,44 @@ Vue.use(VueTables.ClientTable);
         const allRawData = db.ref("/records");
         allRawData.on('value', function(snapshot) {
             let allData = snapshot.val()
-            //console.log(allData)
+            console.log(allData)
+/*
             const message = new Vue({
-                el: '#message',
+                el: '#test',
                 data: {
-                    items: allData
+                    statisticData: calculation(allData).statisticData,
+                    searchQuery: '',
+                    columns: columns,
+                    options: {
+                        columnsDropdown: true,
+                        filterByColumn: true,
+                        sortable: columns,
+                    },
                 }
             })
-
+*/
             const demo = new Vue({
                 el: '#demo',
                 data: {
-                searchQuery: '',
-                columns: columns,
-                mainData: calculation(allData),
-                options: {
-                    columnsDropdown: true,
-                    filterByColumn: true,
-                    sortable: columns,
-                    highlightMatches: true
-                    //headings: {
-                    //    選手名: 'id',
-                    //    試合: '名前',
-                    //    打席数: 'メールアドレス'
-                    //},
-                    //headingsTooltips: {'選手名':'Expanded Title', '試合':'Expanded Title'}
-                },
-                checkedNames: []
+                    allData: allData,
+                    searchQuery: '',
+                    columns: columns,
+                    mainData: calculation(allData).mainData,
+                    options: {
+                        columnsDropdown: true,
+                        filterByColumn: true,
+                        sortable: columns,
+                        highlightMatches: true
+                        //headings: {
+                        //    選手名: 'id',
+                        //    試合: '名前',
+                        //    打席数: 'メールアドレス'
+                        //},
+                        //headingsTooltips: {'選手名':'Expanded Title', '試合':'Expanded Title'}
+                    },
+                    batter: "",
+                    hit: "",
+                    out: ""
                 }
             })
         });
@@ -104,6 +115,7 @@ Vue.use(VueTables.ClientTable);
                 "失策出": 0,
                 "塁打数": 0,
             }
+            let a = 0
             for (i in allData) {
                 for (x in allData[i].records) {
                     if (x == "old") {
@@ -115,11 +127,16 @@ Vue.use(VueTables.ClientTable);
                         }
                     }
                 }
-                mainData[i]["選手名"] =　allData[i].user_infos["選手名"]
+
+                
+
+                //mainData[i]["選手名"] =　allData[i].user_infos["選手名"]
             }
-            //console.log(statisticData)
+            mainData[0]["選手名"] = "hiroto"
+            console.log(mainData[0])
+            console.log(statisticData)
             statistic(mainData)
-            return mainData
+            return {mainData, statisticData}
         }
 
         function statistic(mainData) {
@@ -257,10 +274,40 @@ Vue.use(VueTables.ClientTable);
             //console.log(minData)
             return maxData
         }
+
+        function addBatter(test) {
+            this.batter = test
+        }
+
+        function addHit(test, world) {
+            this.hit = {}
+            this.out = {}
+            this.hit["打席数"] = 1
+            this.hit[test] = 1
+// なんか文法おかしい気がする
+            if (!test == "四球" || !test == "死球") {
+                this.hit["打数"] = 1
+            }
+        }
+
+        function addOut(test) {
+            this.out = {}
+            this.hit = {}
+            this.out["打席数"] = 1
+            this.out["打数"] = 1
+            this.out[test] = 1
+        }
+
+        function submit() {
+            hello = this.hit
+            const directory = '/records/' + this.batter +'/records'
+            var commentsRef = firebase.database().ref(directory)
+            commentsRef.push(hello)
+        }
 /*
         function changeData(){
-            var text = document.getElementById("my_text").value;
-            allData.push({text: text})
+            //var text = document.getElementById("my_text").value;
+            allData.push({test: "test"})
         }
 
         allData.on("value", function(snapshot) {
