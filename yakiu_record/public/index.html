@@ -30,61 +30,42 @@
         <h1>Records</h1>
 
         <div id="demo">
-<!--
-            <ul>
-                <li v-for="column in columns">
-                    <input type="checkbox" :id="column" :value="column" v-model="checkedNames">
-                    <label :for="column">{{ column }}</label>
-                </li>
-            </ul>
-            <br>
-            <span>Checked names: {{ checkedNames }}</span>
--->
             <v-client-table :columns="columns" :data="mainData" :options="options" class="table-striped table-sm table-condensed">
             </v-client-table>
 
-            <div class="btn-group">
-                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    選手
-                </button>
-                <div class="dropdown-menu">
-                    <a v-for="user in allData" class="dropdown-item" @click="addBatter(user.user_infos['選手名'])">{{user.user_infos["選手名"]}}</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Separated link</a>
-                </div>
-            </div>
-            <div class="btn-group">
-                <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    出塁
-                </button>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" @click="addHit('1塁打', 'world')">1塁打</a>
-                    <a class="dropdown-item" @click="addHit('2塁打')">2塁打</a>
-                    <a class="dropdown-item" @click="addHit('3塁打')">3塁打</a>
-                    <a class="dropdown-item" @click="addHit('本塁打')">本塁打</a>
-                    <a class="dropdown-item" @click="addHit('四球')">四球</a>
-                    <a class="dropdown-item" @click="addHit('死球')">死球</a>
-                    <a class="dropdown-item" @click="addHit('失策出')">失策出</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Separated link</a>
-                </div>
-            </div>
-            <div class="btn-group">
-                <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    アウト
-                </button>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" @click="addOut('ゴロアウト')">ゴロアウト</a>
-                    <a class="dropdown-item" @click="addOut('フライアウト')">フライアウト</a>
-                    <a class="dropdown-item" @click="addOut('三振')">三振</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Separated link</a>
-                </div>
+            <select v-model="batter">
+                <option v-for="batter in mainData" v-bind:value="batter['選手名']">
+                    {{ batter['選手名'] }}
+                </option>
+            </select>
+
+            <select v-model="hit">
+                <option v-for="hitOption in hitOptions" v-bind:value="hitOption.value">
+                    {{ hitOption.text }}
+                </option>
+            </select>
+
+            <select v-model="out">
+                <option v-for="outOption in outOptions" v-bind:value="outOption.value">
+                    {{ outOption.text }}
+                </option>
+            </select>
+
+            <select v-model="onBall">
+                <option v-for="onBallOption in onBallOptions" v-bind:value="onBallOption.value">
+                    {{ onBallOption.text }}
+                </option>
+            </select>
+
+            <div id='option'>
+                <label v-for="option in options" :for="option.value">
+                    <input :id="option.value" :value="option.value" v-model="optionResult" type="checkbox" />
+                    {{ option.text }}
+                </label>
             </div>
 
-            <button class="btn btn-primary" type="submit" @click="submit">Submit</button>
+            <button class="btn btn-primary" @click="submit">Submit</button>
         </div>
-
 
         <ul>
             <li>

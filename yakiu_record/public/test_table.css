@@ -34,3 +34,11 @@ tbody tr:nth-child(2n+1) td:first-child {
 .table-hover>tbody>tr:active td {
   background-color: #bfbaba;
 }
+
+/**/
+select,
+#option,
+label,
+button {
+  margin: 1rem;
+}

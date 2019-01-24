@@ -51,25 +51,10 @@ Vue.use(VueTables.ClientTable);
         allRawData.on('value', function(snapshot) {
             let allData = snapshot.val()
             console.log(allData)
-/*
-            const message = new Vue({
-                el: '#test',
-                data: {
-                    statisticData: calculation(allData).statisticData,
-                    searchQuery: '',
-                    columns: columns,
-                    options: {
-                        columnsDropdown: true,
-                        filterByColumn: true,
-                        sortable: columns,
-                    },
-                }
-            })
-*/
+
             const demo = new Vue({
                 el: '#demo',
                 data: {
-                    allData: allData,
                     searchQuery: '',
                     columns: columns,
                     mainData: calculation(allData).mainData,
@@ -85,9 +70,83 @@ Vue.use(VueTables.ClientTable);
                         //},
                         //headingsTooltips: {'選手名':'Expanded Title', '試合':'Expanded Title'}
                     },
+                    hitOptions: [
+                        { text: '出塁', value: '' },
+                        { text: '1塁打', value: '1塁打' },
+                        { text: '2塁打', value: '2塁打' },
+                        { text: '3塁打', value: '3塁打' },
+                        { text: '本塁打', value: '本塁打' },
+                        { text: '四球', value: '四球' },
+                        { text: '死球', value: '死球' },
+                        { text: '失策出', value: '失策出' }
+                    ],
+                    outOptions: [
+                        { text: 'アウト', value: '' },
+                        { text: 'ゴロアウト', value: 'ゴロアウト' },
+                        { text: 'フライアウト', value: 'フライアウト' },
+                        { text: '三振', value: '三振' },
+                        { text: '犠打', value: '犠打' },
+                        { text: '犠飛', value: '犠飛' }
+                    ],
+                    onBallOptions: [
+                        { text: '打球', value: '' },
+                        { text: '1塁', value: '1塁' },
+                        { text: '1,2塁間', value: '2塁間' },
+                        { text: '2塁', value: '2塁' },
+                        { text: '2遊間', value: '2遊間' },
+                        { text: 'ショート', value: 'ショート' },
+                        { text: '3遊間', value: '3遊間' },
+                        { text: '3塁', value: '3塁' },
+                        { text: 'ライト', value: 'ライト' },
+                        { text: '右中間', value: '右中間' },
+                        { text: 'センター', value: 'センター' },
+                        { text: '左中間', value: 'ラ左中間イト' },
+                        { text: 'レフト', value: 'レフト' }
+                    ],
+                    options: [
+                        { text: '得点圏', value: '得点圏' },
+                        { text: 'ランナー1塁', value: 'ランナー1塁' },
+                        { text: '進塁打', value: '進塁打' },
+                        { text: 'ゲッツー崩れ', value: 'ゲッツー崩れ' }
+                    ],
                     batter: "",
                     hit: "",
-                    out: ""
+                    onBall: "",
+                    out: "",
+                    optionResult: []
+                },
+                methods: {
+                    submit: function () {
+                        console.log("this.batter")
+                        console.log(this.batter)
+                        result = {
+                            "打席数": 1
+                        }
+                        //TODO: game_id
+                        //TODO: 条件分岐をちゃんとする
+                        if (this.hit == "四球" || this.hit == "死球" || this.out == "犠打" || this.out == "犠飛") {
+                            result["打数"] = 0
+                        } else {
+                            result["打数"] = 1
+                        }
+                        if (this.hit) {
+                            result[this.hit] = 1
+                        } else {
+                            result[this.out] = 1
+                        }
+                        //TODO: 条件分岐をちゃんとする
+                        //result[this.onBall] = 1
+                        console.log(this.onBall)
+                        for (i in this.optionResult) {
+                            result[this.optionResult[i]] = 1
+                        }
+
+                        const directory = '/records/' + this.batter +'/records'
+                        console.log(result)
+                        console.log(directory)
+                        var commentsRef = firebase.database().ref(directory)
+                        commentsRef.push(result)
+                    }
                 }
             })
         });
@@ -116,24 +175,21 @@ Vue.use(VueTables.ClientTable);
                 "塁打数": 0,
             }
             let a = 0
-            for (i in allData) {
-                for (x in allData[i].records) {
+            Object.keys(allData).forEach(function (k, i) {
+                for (x in allData[k].records) {
                     if (x == "old") {
-                        mainData.push(allData[i].records["old"])
+                        mainData.push(allData[k].records["old"])
                     }
                     if (x != "old") {
-                        for (y in allData[i].records[x]) {
-                            statisticData[y] += allData[i].records[x][y]
+                        for (y in allData[k].records[x]) {
+                            statisticData[y] += allData[k].records[x][y]
                         }
                     }
                 }
-
-                
-
-                //mainData[i]["選手名"] =　allData[i].user_infos["選手名"]
-            }
-            mainData[0]["選手名"] = "hiroto"
-            console.log(mainData[0])
+                mainData[i]["選手名"] =　k
+                //TODO:こっちの方がいいかな
+                //mainData[i]["選手名"] =　allData[k].user_infos["選手名"]
+            });
             console.log(statisticData)
             statistic(mainData)
             return {mainData, statisticData}
@@ -270,40 +326,11 @@ Vue.use(VueTables.ClientTable);
                     //minData[i] = null
                 }
             }
-            console.log(maxData)
+            //console.log(maxData)
             //console.log(minData)
             return maxData
         }
 
-        function addBatter(test) {
-            this.batter = test
-        }
-
-        function addHit(test, world) {
-            this.hit = {}
-            this.out = {}
-            this.hit["打席数"] = 1
-            this.hit[test] = 1
-// なんか文法おかしい気がする
-            if (!test == "四球" || !test == "死球") {
-                this.hit["打数"] = 1
-            }
-        }
-
-        function addOut(test) {
-            this.out = {}
-            this.hit = {}
-            this.out["打席数"] = 1
-            this.out["打数"] = 1
-            this.out[test] = 1
-        }
-
-        function submit() {
-            hello = this.hit
-            const directory = '/records/' + this.batter +'/records'
-            var commentsRef = firebase.database().ref(directory)
-            commentsRef.push(hello)
-        }
 /*
         function changeData(){
             //var text = document.getElementById("my_text").value;
