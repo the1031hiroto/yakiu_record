@@ -44,6 +44,8 @@ Vue.use(VueTables.ClientTable);
         "XR27",
         "wOBA",
         "wRAA",
+        "ランナー1塁",
+        "進塁打"
         ]
 
     const db = firebase.database();
@@ -51,18 +53,20 @@ Vue.use(VueTables.ClientTable);
         allRawData.on('value', function(snapshot) {
             let allData = snapshot.val()
             console.log(allData)
-
+            //console.log(calculation(allData).statisticData)
             const demo = new Vue({
                 el: '#demo',
                 data: {
-                    searchQuery: '',
                     columns: columns,
                     mainData: calculation(allData).mainData,
+                    oldData: calculation(allData).oldData,
                     options: {
                         columnsDropdown: true,
-                        filterByColumn: true,
                         sortable: columns,
-                        highlightMatches: true
+                        filterByColumn: true,
+                        dateColumns: ["試合日"],
+                        datepickerOptions:{ locale: { cancelLabel: 'Clear' } }
+                        //highlightMatches: true
                         //headings: {
                         //    選手名: 'id',
                         //    試合: '名前',
@@ -103,7 +107,7 @@ Vue.use(VueTables.ClientTable);
                         { text: '左中間', value: 'ラ左中間イト' },
                         { text: 'レフト', value: 'レフト' }
                     ],
-                    options: [
+                    recordOptions: [
                         { text: '得点圏', value: '得点圏' },
                         { text: 'ランナー1塁', value: 'ランナー1塁' },
                         { text: '進塁打', value: '進塁打' },
@@ -117,9 +121,10 @@ Vue.use(VueTables.ClientTable);
                 },
                 methods: {
                     submit: function () {
-                        console.log("this.batter")
                         console.log(this.batter)
+                        const date = new Date()
                         result = {
+                            "試合日": date.toLocaleDateString(),
                             "打席数": 1
                         }
                         //TODO: game_id
@@ -131,68 +136,106 @@ Vue.use(VueTables.ClientTable);
                         }
                         if (this.hit) {
                             result[this.hit] = 1
-                        } else {
+                        } else if (this.out) {
                             result[this.out] = 1
                         }
                         //TODO: 条件分岐をちゃんとする
-                        //result[this.onBall] = 1
-                        console.log(this.onBall)
-                        for (i in this.optionResult) {
-                            result[this.optionResult[i]] = 1
+                        if ((this.hit != "四球" || this.hit != "死球" || this.out != "三振") && this.onBall) {
+                            result["打球"] = this.onBall
+                        }
+                        if (this.optionResult) {
+                            for (i in this.optionResult) {
+                                result[this.optionResult[i]] = 1
+                            }
                         }
 
                         const directory = '/records/' + this.batter +'/records'
-                        console.log(result)
-                        console.log(directory)
-                        var commentsRef = firebase.database().ref(directory)
-                        commentsRef.push(result)
+                        const commentsRef = firebase.database().ref(directory)
+                        if (this.batter) {
+                            commentsRef.push(result)
+                        } else {
+                            console.log("no batter")
+                            return
+                        }
+                        window.location.reload()
                     }
                 }
             })
         });
 
         function calculation(allData) {
-            mainData = []
+            let mainData = []
+            let oldData = []
             let statisticData = {
-                "試合": 0,
-                "打席数": 0,
-                "打数": 0,
-                "1塁打": 0,
-                "2塁打": 0,
-                "3塁打": 0,
-                "本塁打": 0,
-                "打点": 0,
-                "得点": 0,
-                "四球": 0,
-                "死球": 0,
-                "三振": 0,
-                "併殺打": 0,
-                "犠飛": 0,
-                "犠打": 0,
-                "盗塁": 0,
-                "牽制死": 0,
-                "失策出": 0,
-                "塁打数": 0,
+                "ひろと": {
+                    "試合": 0,
+                    "打席数": 0,
+                    "打数": 0,
+                    "1塁打": 0,
+                    "2塁打": 0,
+                    "3塁打": 0,
+                    "本塁打": 0,
+                    "打点": 0,
+                    "得点": 0,
+                    "四球": 0,
+                    "死球": 0,
+                    "三振": 0,
+                    "併殺打": 0,
+                    "犠飛": 0,
+                    "犠打": 0,
+                    "盗塁": 0,
+                    "牽制死": 0,
+                    "失策出": 0,
+                    "塁打数": 0,
+                    "ランナー1塁": 0,
+                    "進塁打": 0
+                },
+                "大志": {
+                    "試合": 0,
+                    "打席数": 0,
+                    "打数": 0,
+                    "1塁打": 0,
+                    "2塁打": 0,
+                    "3塁打": 0,
+                    "本塁打": 0,
+                    "打点": 0,
+                    "得点": 0,
+                    "四球": 0,
+                    "死球": 0,
+                    "三振": 0,
+                    "併殺打": 0,
+                    "犠飛": 0,
+                    "犠打": 0,
+                    "盗塁": 0,
+                    "牽制死": 0,
+                    "失策出": 0,
+                    "塁打数": 0,
+                    "ランナー1塁": 0,
+                    "進塁打": 0
+                }
             }
-            let a = 0
             Object.keys(allData).forEach(function (k, i) {
+                mainData[i] =　{}
                 for (x in allData[k].records) {
                     if (x == "old") {
-                        mainData.push(allData[k].records["old"])
+                        oldData.push(allData[k].records["old"])
                     }
                     if (x != "old") {
                         for (y in allData[k].records[x]) {
-                            statisticData[y] += allData[k].records[x][y]
+                            statisticData[k][y] += allData[k].records[x][y]
                         }
                     }
+                }
+                if (statisticData[k]) {
+                    mainData[i] = statisticData[k]
                 }
                 mainData[i]["選手名"] =　k
                 //TODO:こっちの方がいいかな
                 //mainData[i]["選手名"] =　allData[k].user_infos["選手名"]
             });
-            console.log(statisticData)
+            console.log(mainData)
             statistic(mainData)
-            return {mainData, statisticData}
+            return {mainData, oldData}
         }
 
         function statistic(mainData) {
@@ -306,6 +349,12 @@ Vue.use(VueTables.ClientTable);
                 "ゴロアウト": [],
                 "フライアウト": [],
                 "打球": [],
+                "ランナー1塁": [],
+                "進塁打": [],
+                "得点圏": [],
+                "打球": [],
+                "ゲッツー崩れ": [],
+                "試合日": []
             }
             for (i in mainData) {
                 for (x in mainData[i]) {

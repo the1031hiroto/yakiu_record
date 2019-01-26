@@ -24,6 +24,12 @@
 
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
+        <!--datepicker-->
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
     </head>
 
     <body>
@@ -58,7 +64,7 @@
             </select>
 
             <div id='option'>
-                <label v-for="option in options" :for="option.value">
+                <label v-for="option in recordOptions" :for="option.value">
                     <input :id="option.value" :value="option.value" v-model="optionResult" type="checkbox" />
                     {{ option.text }}
                 </label>
@@ -98,5 +104,7 @@
     </body>
 
     <script src="https://www.gstatic.com/firebasejs/5.7.3/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.7.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.7.3/firebase-database.js"></script>
     <script src="main.js"></script>
 </html>
