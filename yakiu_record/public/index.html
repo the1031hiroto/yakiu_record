@@ -35,13 +35,19 @@
     <body>
         <h1>Records</h1>
 
-        <div id="demo">
-            <v-client-table :columns="columns" :data="mainData" :options="options" class="table-striped table-sm table-condensed">
-            </v-client-table>
-
+        <div id="deffence-show">
+            <div>
+                <deffence-add
+                    v-for="deffence in deffences"
+                    v-bind:key="deffence.id"
+                    v-bind:deffence="deffence"
+                ></deffence-add>
+            </div>
+        </div>
+        <div id="offence-add">
             <select v-model="batter">
-                <option v-for="batter in mainData" v-bind:value="batter['選手名']">
-                    {{ batter['選手名'] }}
+                <option v-for="batter in batters" v-bind:value="batter.value">
+                    {{ batter.text }}
                 </option>
             </select>
 
@@ -70,8 +76,26 @@
                 </label>
             </div>
 
+            <select v-model="daten">
+                <option v-for="datenOption in datenOptions" v-bind:value="datenOption.value">
+                    {{ datenOption.text }}
+                </option>
+            </select>
+
+            <br>
+
             <button class="btn btn-primary" @click="submit">Submit</button>
         </div>
+
+        <div id="demo">
+            <ul>
+                <button v-on:click="changeTabu('old')" v-bind:class="{'active': isActive === 'old'}" class="btn btn-primary">打撃成績トータル</button>
+                <button v-on:click="changeTabu('current')" v-bind:class="{'active': isActive === 'current'}" class="btn btn-primary">打撃成績今シーズン</button>
+            </ul>
+            <v-client-table :columns="columns" :data="mainData" :options="options" class="table-striped table-sm table-condensed">
+            </v-client-table>
+        </div>
+
 
         <ul>
             <li>
@@ -107,4 +131,5 @@
     <script src="https://www.gstatic.com/firebasejs/5.7.3/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.7.3/firebase-database.js"></script>
     <script src="main.js"></script>
+    <script type="text/javascript" src="old.js"></script>
 </html>

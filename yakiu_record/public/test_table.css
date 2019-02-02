@@ -1,4 +1,5 @@
-#demo .VueTables__columns-dropdown-wrapper {
+#demo .VueTables__columns-dropdown-wrapper,
+#old .VueTables__columns-dropdown-wrapper {
   display: flex;
 }
 #demo .pull-right>.dropdown-menu {
