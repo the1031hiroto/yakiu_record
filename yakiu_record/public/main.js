@@ -42,10 +42,11 @@ Vue.component('deffence-add', {
                 "ポジション": this.position,
                 "捕殺": this.deffence.killSupportCount,
                 "刺殺": this.deffence.killCount,
-                "エラー": this.deffence.errorCount
+                "エラー": this.deffence.errorCount,
+                "選手名": this.deffence.name
 
             }
-            const directory = '/deffence/' + this.deffence.name
+            const directory = '/deffence'
             const commentsRef = firebase.database().ref(directory)
             commentsRef.push(result)
 
@@ -74,9 +75,50 @@ Vue.component('deffence-add', {
         </div>
         `
 })
+const deffenceColumns = [
+    '選手名',
+    "刺殺",
+    "捕殺",
+    "エラー",
+    "守備率",
+    "ポジション"
+]
 
 new Vue({
     el: '#deffence-show',
+    mounted() {
+        const allRawDeffenceData = db.ref("/deffence");
+        deffenceDataList = []
+        allRawDeffenceData.on('value', (snapshot) => {
+            deffenceData = snapshot.val()
+            Object.keys(deffenceData).forEach(function (k, i) {
+                deffenceDataList[i] = deffenceData[k]
+            })
+            const sumDeffenceData = deffenceDataList.reduce(function (result, current) {
+                let element = result.find(function (p) {
+                    return p.選手名 === current.選手名 && p.ポジション === current.ポジション
+                })
+                if (element) {
+                    element.刺殺 += current.刺殺
+                    element.捕殺 += current.捕殺
+                    element.エラー += current.エラー
+                } else {
+                    result.push({
+                        選手名: current.選手名,
+                        ポジション: current.ポジション,
+                        刺殺: current.刺殺,
+                        捕殺: current.捕殺,
+                        エラー: current.エラー,
+                    })
+                }
+                return result
+            }, [])
+            for (i in sumDeffenceData) {
+                sumDeffenceData[i]['守備率'] = (sumDeffenceData[i]['刺殺'] + sumDeffenceData[i]['捕殺']) / (sumDeffenceData[i]['刺殺'] + sumDeffenceData[i]['捕殺'] + sumDeffenceData[i]['エラー'])
+            }
+            this.deffenceData = sumDeffenceData
+        })
+    },
     data: {
         deffences: [
             { id: 1, name: 'ひろと', killSupportCount: 0, killCount: 0, errorCount: 0, },
@@ -88,11 +130,22 @@ new Vue({
             { id: 7, name: '隼人', killSupportCount: 0, killCount: 0, errorCount: 0, },
             { id: 8, name: '先生', killSupportCount: 0, killCount: 0, errorCount: 0, },
             { id: 9, name: 'りょーま', killSupportCount: 0, killCount: 0, errorCount: 0, },
-            { id: 10, name: '涼', killSupportCount: 0, killCount: 0, errorCount: 0, }
+            { id: 10, name: '涼', killSupportCount: 0, killCount: 0, errorCount: 0, },
+            { id: 11, name: 'さいち', killSupportCount: 0, killCount: 0, errorCount: 0, },
+            { id: 12, name: 'ゆーや', killSupportCount: 0, killCount: 0, errorCount: 0, },
+            { id: 13, name: '岡さん', killSupportCount: 0, killCount: 0, errorCount: 0, }
         ],
-        position: 0
+        position: 0,
+        isActive: "current",
+        columns: deffenceColumns,
+        deffenceData: [],
+        options: {
+            sortable: deffenceColumns,
+            filterByColumn: true,
+        }
     }
 })
+
 new Vue({
     el: '#offence-add',
     data: {
@@ -107,7 +160,10 @@ new Vue({
             { text: 'バタニキ', value: 'バタニキ' },
             { text: 'りょーま', value: 'りょーま' },
             { text: '涼', value: '涼' },
-            { text: '隼人', value: '隼人' }
+            { text: '隼人', value: '隼人' },
+            { text: 'さいち', value: 'さいち' },
+            { text: 'ゆーや', value: 'ゆーや' },
+            { text: '岡さん', value: '岡さん' },
         ],
         hitOptions: [
             { text: '出塁', value: '' },
@@ -125,7 +181,8 @@ new Vue({
             { text: 'フライアウト', value: 'フライアウト' },
             { text: '三振', value: '三振' },
             { text: '犠打', value: '犠打' },
-            { text: '犠飛', value: '犠飛' }
+            { text: '犠飛', value: '犠飛' },
+            { text: '併殺打', value: '併殺打' }
         ],
         onBallOptions: [
             { text: '打球', value: '' },
@@ -150,7 +207,8 @@ new Vue({
             { text: '得点圏', value: '得点圏' },
             { text: 'ランナー1塁', value: 'ランナー1塁' },
             { text: '進塁打', value: '進塁打' },
-            { text: 'ゲッツー崩れ', value: 'ゲッツー崩れ' }
+            { text: 'ゲッツー崩れ', value: 'ゲッツー崩れ' },
+            { text: '盗塁死', value: '盗塁死' },
         ],
         datenOptions: [
             { text: '打点', value: '' },
@@ -164,14 +222,16 @@ new Vue({
         onBall: "",
         out: "",
         optionResult: [],
-        daten: 0
+        daten: 0,
+        isConfirm: false
     },
     methods: {
         submit: function () {
             const today = new Date()
             result = {
                 "試合日": today.toLocaleDateString(),
-                "打席数": 1
+                "打席数": 1,
+                "選手名": this.batter
             }
             //TODO: game_id
             //TODO: 条件分岐をちゃんとする
@@ -198,7 +258,7 @@ new Vue({
                 result["打点"] = this.daten
             }
 
-            const directory = '/records/' + this.batter +'/records'
+            const directory = '/records'
             const commentsRef = firebase.database().ref(directory)
             if (this.batter) {
                 commentsRef.push(result)
@@ -206,6 +266,13 @@ new Vue({
                 console.log("no batter")
                 return
             }
+            this.batter = ""
+            this.hit = ""
+            this.onBall = ""
+            this.out = ""
+            this.optionResult = []
+            this.daten = 0
+            this.isConfirm = false
         }
     }
 })
@@ -262,348 +329,132 @@ const columns = [
     "進塁打"
 ]
 
-const allRawData = db.ref("/records");
-allRawData.on('value', function(snapshot) {
-    let allData = snapshot.val()
-    console.log(allData)
-    //console.log(calculation(allData).statisticData)
-    const demo = new Vue({
-        el: '#demo',
-        data: {
-            isActive: "current",
-            columns: columns,
-            mainData: calculation(allData).mainData,
-            options: {
-                columnsDropdown: true,
-                sortable: columns,
-                filterByColumn: true,
-                dateColumns: ["試合日"],
-                datepickerOptions:{ locale: { cancelLabel: 'Clear' } }
-                //highlightMatches: true
-                //headings: {
-                //    選手名: 'id',
-                //    試合: '名前',
-                //    打席数: 'メールアドレス'
-                //},
-                //headingsTooltips: {'選手名':'Expanded Title', '試合':'Expanded Title'}
-            }
-        },
-        methods: {
-            changeTabu: function (tabu) {
-                this.isActive = tabu
-                if (tabu == "current") {
-                    this.mainData = calculation(allData).mainData
-                } else if (tabu == "old") {
-                    this.mainData = calculation(allData).oldData
+new Vue({
+    el: '#demo',
+    mounted() {
+        const allRawData = db.ref("records");
+        let offenceDataList = []
+        allRawData.on('value', (snapshot) => {
+            offenceData = snapshot.val()
+            Object.keys(offenceData).forEach(function (k, i) {
+                offenceDataList[i] = offenceData[k]
+            })
+            const sumOffenceData = offenceDataList.reduce(function (result, current) {
+                let element = result.find(function (p) {
+                    return p.選手名 === current.選手名
+                })
+                if (element) {
+                    // TODO:map?
+                    element.打席数 = element.打席数 ? element.打席数 : 0
+                    element.打数 = element.打数 ? element.打数 : 0
+                    element['1塁打'] = element['1塁打'] ? element['1塁打'] : 0
+                    element['2塁打'] = element['2塁打'] ? element['2塁打'] : 0
+                    element['3塁打'] = element['3塁打'] ? element['3塁打'] : 0
+                    element.本塁打 = element.本塁打 ? element.本塁打 : 0
+                    element.打点 = element.打点 ? element.打点 : 0
+                    element.得点 = element.得点 ? element.得点 : 0
+                    element.四球 = element.四球 ? element.四球 : 0
+                    element.死球 = element.死球 ? element.死球 : 0
+                    element.三振 = element.三振 ? element.三振 : 0
+                    element.併殺打 = element.併殺打 ? element.併殺打 : 0
+                    element.犠飛 = element.犠飛 ? element.犠飛 : 0
+                    element.犠打 = element.犠打 ? element.犠打 : 0
+                    element.盗塁 = element.盗塁 ? element.盗塁 : 0
+                    element.牽制死 = element.牽制死 ? element.牽制死 : 0
+                    element.失策出 = element.失策出 ? element.失策出 : 0
+                    element.塁打数 = element.塁打数 ? element.塁打数 : 0
+                    element.ランナー1塁 = element.ランナー1塁 ? element.盗ランナー1塁塁 : 0
+                    element.進塁打 = element.進塁打 ? element.進塁打 : 0
+
+                    // element.試合 += current.試合
+                    element.打席数 += current.打席数 ? current.打席数 : 0
+                    element.打数 += current.打数 ? current.打数 : 0
+                    element['1塁打'] += current['1塁打'] ? current['1塁打'] : 0
+                    element['2塁打'] += current['2塁打'] ? current['2塁打'] : 0
+                    element['3塁打'] += current['3塁打'] ? current['3塁打'] : 0
+                    element['本塁打'] += current['本塁打'] ? current['本塁打'] : 0
+                    element.打点 += current.打点 ? current.打点 : 0
+                    element.得点 += current.得点 ? current.得点 : 0
+                    element.四球 += current.四球 ? current.四球 : 0
+                    element.死球 += current.死球 ? current.死球 : 0
+                    element.三振 += current.三振 ? current.三振 : 0
+                    element.併殺打 += current.併殺打 ? current.併殺打 : 0
+                    element.犠飛 += current.犠飛 ? current.犠飛 : 0
+                    element.犠打 += current.犠打 ? current.犠打 : 0
+                    element.盗塁 += current.盗塁 ? current.盗塁 : 0
+                    element.牽制死 += current.牽制死 ? current.牽制死 : 0
+                    element.失策出 += current.失策出 ? current.失策出 : 0
+                    element.塁打数 += current.塁打数 ? current.塁打数 : 0
+                    element.ランナー1塁 += current.ランナー1塁 ? current.ランナー1塁 : 0
+                    element.進塁打 += current.進塁打 ? current.進塁打 : 0
+                } else {
+                    result.push({
+                        選手名: current.選手名,
+                        // 試合: current.試合,
+                        打席数: current.打席数,
+                        打数: current.打数,
+                        本塁打: current['1塁打'],
+                        本塁打: current['2塁打'],
+                        本塁打: current['3塁打'],
+                        本塁打: current.本塁打,
+                        打点: current.打点,
+                        得点: current.得点,
+                        四球: current.四球,
+                        死球: current.死球,
+                        三振: current.三振,
+                        併殺打: current.併殺打,
+                        犠飛: current.犠飛,
+                        犠打: current.犠打,
+                        盗塁: current.盗塁,
+                        牽制死: current.牽制死,
+                        失策出: current.失策出,
+                        塁打数: current.塁打数,
+                        ランナー1塁: current.ランナー1塁,
+                        進塁打: current.進塁打
+                    })
                 }
-            }
+                return result
+            }, [])
+            this.mainData = sumOffenceData
+            this.showData = sumOffenceData
+            console.log(sumOffenceData)
+            this.mainData = statistic(sumOffenceData)
+            // this.oldData = statistic(sumOffenceData)
+        })
+    },
+    data: {
+        isActive: "current",
+        columns: columns,
+        oldData: [],
+        mainData: [0],
+        showData: [1],
+        options: {
+            columnsDropdown: true,
+            sortable: columns,
+            filterByColumn: true,
+            // dateColumns: ["試合日"],
+            // datepickerOptions:{ locale: { cancelLabel: 'Clear' } }
+            //highlightMatches: true
+            //headings: {
+            //    選手名: 'id',
+            //    試合: '名前',
+            //    打席数: 'メールアドレス'
+            //},
+            //headingsTooltips: {'選手名':'Expanded Title', '試合':'Expanded Title'}
         }
-    })
-});
-function calculation(allData) {
-    let mainData = []
-    let oldData = []
-    let statisticData = {
-        "ひろと": {
-            "試合": 0,
-            "打席数": 0,
-            "打数": 0,
-            "1塁打": 0,
-            "2塁打": 0,
-            "3塁打": 0,
-            "本塁打": 0,
-            "打点": 0,
-            "得点": 0,
-            "四球": 0,
-            "死球": 0,
-            "三振": 0,
-            "併殺打": 0,
-            "犠飛": 0,
-            "犠打": 0,
-            "盗塁": 0,
-            "牽制死": 0,
-            "失策出": 0,
-            "塁打数": 0,
-            "ランナー1塁": 0,
-            "進塁打": 0
-        },
-        "大志": {
-            "試合": 0,
-            "打席数": 0,
-            "打数": 0,
-            "1塁打": 0,
-            "2塁打": 0,
-            "3塁打": 0,
-            "本塁打": 0,
-            "打点": 0,
-            "得点": 0,
-            "四球": 0,
-            "死球": 0,
-            "三振": 0,
-            "併殺打": 0,
-            "犠飛": 0,
-            "犠打": 0,
-            "盗塁": 0,
-            "牽制死": 0,
-            "失策出": 0,
-            "塁打数": 0,
-            "ランナー1塁": 0,
-            "進塁打": 0
-        },"龍": {
-            "試合": 0,
-            "打席数": 0,
-            "打数": 0,
-            "1塁打": 0,
-            "2塁打": 0,
-            "3塁打": 0,
-            "本塁打": 0,
-            "打点": 0,
-            "得点": 0,
-            "四球": 0,
-            "死球": 0,
-            "三振": 0,
-            "併殺打": 0,
-            "犠飛": 0,
-            "犠打": 0,
-            "盗塁": 0,
-            "牽制死": 0,
-            "失策出": 0,
-            "塁打数": 0,
-            "ランナー1塁": 0,
-            "進塁打": 0
-        },
-        "達也": {
-            "試合": 0,
-            "打席数": 0,
-            "打数": 0,
-            "1塁打": 0,
-            "2塁打": 0,
-            "3塁打": 0,
-            "本塁打": 0,
-            "打点": 0,
-            "得点": 0,
-            "四球": 0,
-            "死球": 0,
-            "三振": 0,
-            "併殺打": 0,
-            "犠飛": 0,
-            "犠打": 0,
-            "盗塁": 0,
-            "牽制死": 0,
-            "失策出": 0,
-            "塁打数": 0,
-            "ランナー1塁": 0,
-            "進塁打": 0
-        },"涼": {
-            "試合": 0,
-            "打席数": 0,
-            "打数": 0,
-            "1塁打": 0,
-            "2塁打": 0,
-            "3塁打": 0,
-            "本塁打": 0,
-            "打点": 0,
-            "得点": 0,
-            "四球": 0,
-            "死球": 0,
-            "三振": 0,
-            "併殺打": 0,
-            "犠飛": 0,
-            "犠打": 0,
-            "盗塁": 0,
-            "牽制死": 0,
-            "失策出": 0,
-            "塁打数": 0,
-            "ランナー1塁": 0,
-            "進塁打": 0
-        },
-        "りょーま": {
-            "試合": 0,
-            "打席数": 0,
-            "打数": 0,
-            "1塁打": 0,
-            "2塁打": 0,
-            "3塁打": 0,
-            "本塁打": 0,
-            "打点": 0,
-            "得点": 0,
-            "四球": 0,
-            "死球": 0,
-            "三振": 0,
-            "併殺打": 0,
-            "犠飛": 0,
-            "犠打": 0,
-            "盗塁": 0,
-            "牽制死": 0,
-            "失策出": 0,
-            "塁打数": 0,
-            "ランナー1塁": 0,
-            "進塁打": 0
-        },"浅野": {
-            "試合": 0,
-            "打席数": 0,
-            "打数": 0,
-            "1塁打": 0,
-            "2塁打": 0,
-            "3塁打": 0,
-            "本塁打": 0,
-            "打点": 0,
-            "得点": 0,
-            "四球": 0,
-            "死球": 0,
-            "三振": 0,
-            "併殺打": 0,
-            "犠飛": 0,
-            "犠打": 0,
-            "盗塁": 0,
-            "牽制死": 0,
-            "失策出": 0,
-            "塁打数": 0,
-            "ランナー1塁": 0,
-            "進塁打": 0
-        },
-        "三好": {
-            "試合": 0,
-            "打席数": 0,
-            "打数": 0,
-            "1塁打": 0,
-            "2塁打": 0,
-            "3塁打": 0,
-            "本塁打": 0,
-            "打点": 0,
-            "得点": 0,
-            "四球": 0,
-            "死球": 0,
-            "三振": 0,
-            "併殺打": 0,
-            "犠飛": 0,
-            "犠打": 0,
-            "盗塁": 0,
-            "牽制死": 0,
-            "失策出": 0,
-            "塁打数": 0,
-            "ランナー1塁": 0,
-            "進塁打": 0
-        },"航": {
-            "試合": 0,
-            "打席数": 0,
-            "打数": 0,
-            "1塁打": 0,
-            "2塁打": 0,
-            "3塁打": 0,
-            "本塁打": 0,
-            "打点": 0,
-            "得点": 0,
-            "四球": 0,
-            "死球": 0,
-            "三振": 0,
-            "併殺打": 0,
-            "犠飛": 0,
-            "犠打": 0,
-            "盗塁": 0,
-            "牽制死": 0,
-            "失策出": 0,
-            "塁打数": 0,
-            "ランナー1塁": 0,
-            "進塁打": 0
-        },"バタニキ": {
-            "試合": 0,
-            "打席数": 0,
-            "打数": 0,
-            "1塁打": 0,
-            "2塁打": 0,
-            "3塁打": 0,
-            "本塁打": 0,
-            "打点": 0,
-            "得点": 0,
-            "四球": 0,
-            "死球": 0,
-            "三振": 0,
-            "併殺打": 0,
-            "犠飛": 0,
-            "犠打": 0,
-            "盗塁": 0,
-            "牽制死": 0,
-            "失策出": 0,
-            "塁打数": 0,
-            "ランナー1塁": 0,
-            "進塁打": 0
-        },"先生": {
-            "試合": 0,
-            "打席数": 0,
-            "打数": 0,
-            "1塁打": 0,
-            "2塁打": 0,
-            "3塁打": 0,
-            "本塁打": 0,
-            "打点": 0,
-            "得点": 0,
-            "四球": 0,
-            "死球": 0,
-            "三振": 0,
-            "併殺打": 0,
-            "犠飛": 0,
-            "犠打": 0,
-            "盗塁": 0,
-            "牽制死": 0,
-            "失策出": 0,
-            "塁打数": 0,
-            "ランナー1塁": 0,
-            "進塁打": 0
-        },"隼人": {
-            "試合": 0,
-            "打席数": 0,
-            "打数": 0,
-            "1塁打": 0,
-            "2塁打": 0,
-            "3塁打": 0,
-            "本塁打": 0,
-            "打点": 0,
-            "得点": 0,
-            "四球": 0,
-            "死球": 0,
-            "三振": 0,
-            "併殺打": 0,
-            "犠飛": 0,
-            "犠打": 0,
-            "盗塁": 0,
-            "牽制死": 0,
-            "失策出": 0,
-            "塁打数": 0,
-            "ランナー1塁": 0,
-            "進塁打": 0
+    },
+    methods: {
+        changeTabu: function (tabu) {
+            this.isActive = tabu
+            if (tabu == "current") {
+                console.log(this.mainData)
+                this.showData = this.mainData
+            } else if (tabu == "old") {
+                this.showData = this.oldData
+            }
         }
     }
-
-    Object.keys(allData).forEach(function (k, i) {
-        mainData[i] =　{}
-        for (x in allData[k].records) {
-            if (x == "old") {
-                oldData.push(allData[k].records["old"])
-            }
-            if (x != "old") {
-                for (y in allData[k].records[x]) {
-                    if (y != "試合日" && y != "打球") {
-                        statisticData[k][y] += allData[k].records[x][y]
-                    }
-                }
-            }
-        }
-        if (statisticData[k]) {
-            mainData[i] = statisticData[k]
-        }
-        mainData[i]["選手名"] =　k
-        oldData[i]["選手名"] =　k
-        //TODO:こっちの方がいいかな
-        //mainData[i]["選手名"] =　allData[k].user_infos["選手名"]
-    });
-    oldData.splice(2, 1)
-    //console.log(oldData)
-    console.log(mainData)
-    statistic(mainData)
-    statistic(oldData)
-    return {mainData, oldData}
-}
+})
 
 function statistic(mainData) {
     for (i = 0; i < mainData.length; i++) {
@@ -650,6 +501,7 @@ function statistic(mainData) {
             1.725 * mainData[i]["3塁打"] +
             2.065 * mainData[i]["本塁打"]
         ) / (dasu + shishi + mainData[i]["犠飛"])
+        mainData[i]["wOBA"] = mainData[i]["wOBA"] ? mainData[i]["wOBA"] : 0
 
         mainData[i]["三振率"] = (mainData[i]["三振"] / mainData[i]["打席数"]).toFixed(3)
         mainData[i]["四球率"] = (mainData[i]["四球"] / mainData[i]["打席数"]).toFixed(3)

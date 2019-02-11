@@ -36,6 +36,8 @@
         <h1>Records</h1>
 
         <div id="deffence-show">
+                <v-client-table :columns="columns" :data="deffenceData" :options="options" class="table-striped table-sm table-condensed">
+                    </v-client-table>
             <div>
                 <deffence-add
                     v-for="deffence in deffences"
@@ -84,7 +86,19 @@
 
             <br>
 
-            <button class="btn btn-primary" @click="submit">Submit</button>
+            <button class="btn btn-primary" @click="isConfirm = true">Submit</button>
+            <div v-if="isConfirm" class="modal1">
+                <div>
+                    バッター：{{ batter }}<br>
+                    ヒット：{{ hit }}<br>
+                    アウト：{{ out }}<br>
+                    打球：{{ onBall }}<br>
+                    その他：{{ optionResult }}<br>
+                    打点{{ daten }}<br>
+                    <button class="btn btn-primary" @click="submit">Submit</button>
+                    <button class="btn btn-danger" @click="isConfirm = false">Close</button>
+                </div>
+            </div>
         </div>
 
         <div id="demo">
@@ -92,10 +106,9 @@
                 <button v-on:click="changeTabu('old')" v-bind:class="{'active': isActive === 'old'}" class="btn btn-primary">打撃成績トータル</button>
                 <button v-on:click="changeTabu('current')" v-bind:class="{'active': isActive === 'current'}" class="btn btn-primary">打撃成績今シーズン</button>
             </ul>
-            <v-client-table :columns="columns" :data="mainData" :options="options" class="table-striped table-sm table-condensed">
+            <v-client-table :columns="columns" :data="showData" :options="options" class="table-striped table-sm table-condensed">
             </v-client-table>
         </div>
-
 
         <ul>
             <li>
@@ -131,5 +144,7 @@
     <script src="https://www.gstatic.com/firebasejs/5.7.3/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.7.3/firebase-database.js"></script>
     <script src="main.js"></script>
+    <!--
     <script type="text/javascript" src="old.js"></script>
+    -->
 </html>
