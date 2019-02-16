@@ -8,6 +8,7 @@
 
         <!--report-->
         <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+        <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
         <!-- Latest compiled and minified CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
@@ -30,6 +31,10 @@
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
+        <!-- CDNJS :: Sortable (https://cdnjs.com/) -->
+        <script src="//cdn.jsdelivr.net/npm/sortablejs@1.7.0/Sortable.min.js"></script>
+        <!-- CDNJS :: Vue.Draggable (https://cdnjs.com/) -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.17.0/vuedraggable.min.js"></script>
     </head>
 
     <body>
@@ -46,7 +51,15 @@
                 ></deffence-add>
             </div>
         </div>
+
         <div id="offence-add">
+            <h2>打順</h2>
+            <draggable :list="batters" class="dragArea" element="ul">
+                <li v-for="batter in batters">{{ batter.text }}</li>
+            </draggable>
+            <button @click="reduceBatter">最後のバッターを除外</button>
+            <br>
+
             <select v-model="batter">
                 <option v-for="batter in batters" v-bind:value="batter.value">
                     {{ batter.text }}

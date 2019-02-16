@@ -63,3 +63,15 @@ button {
   padding: 4rem;
   background: white;
 }
+
+.add-deffence {
+  display: flex;
+}
+.dragArea {
+  width: 20rem;
+  margin-left: 5rem;
+}
+.dragArea li {
+  list-style-type: decimal;
+  font-size: 3rem;
+}

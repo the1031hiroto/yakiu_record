@@ -21,6 +21,7 @@ Vue.component('deffence-add', {
     data: function () {
         return {
             positionOptions: [
+                { text: 'ポジション', value: '' },
                 { text: 'ピッチャー', value: 'ピッチャー' },
                 { text: 'キャッチャー', value: 'キャッチャー' },
                 { text: '1塁', value: '1塁' },
@@ -57,11 +58,8 @@ Vue.component('deffence-add', {
     },
     props: ['deffence', 'position'],
     template: `
-        <div class="blog-deffence">
+        <div class="add-deffence">
             <h3>{{ deffence.name }}</h3>
-            <ul>
-                <li v-for="data in this.deffenceData[deffence.name]">{{data}}</li>
-            </ul>
             <select v-model="position">
                 <option v-for="positionOption in this.positionOptions" v-bind:value="positionOption.value">
                     {{ positionOption.text }}
@@ -150,7 +148,7 @@ new Vue({
     el: '#offence-add',
     data: {
         batters: [
-            { text: 'バッター', value: '' },
+            // { text: 'バッター', value: '' },
             { text: 'ひろと', value: 'ひろと' },
             { text: '大志', value: '大志' },
             { text: '龍', value: '龍' },
@@ -164,6 +162,7 @@ new Vue({
             { text: 'さいち', value: 'さいち' },
             { text: 'ゆーや', value: 'ゆーや' },
             { text: '岡さん', value: '岡さん' },
+            { text: '航', value: '航' },
         ],
         hitOptions: [
             { text: '出塁', value: '' },
@@ -273,6 +272,9 @@ new Vue({
             this.optionResult = []
             this.daten = 0
             this.isConfirm = false
+        },
+        reduceBatter: function () {
+            this.batters.pop()
         }
     }
 })
