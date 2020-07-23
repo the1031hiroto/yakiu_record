@@ -5,6 +5,13 @@ class RecordsController < ApplicationController
   # GET /records.json
   def index
     @records = Record.all
+    # ユーザーの試合毎の成績
+    @test = Record.group(:user_id, :game_id).sum(:plate_appearance)
+    # ユーザーのトータルの成績
+    @test2 = Record.group(:user_id).sum(:plate_appearance)
+    @test3 = Record.find_by(user_id: 1)
+    @test4 = Record.group(:user_id).select(Record.arel_table[:plate_appearance].sum().as('f'))
+
   end
 
   # GET /records/1
@@ -24,6 +31,7 @@ class RecordsController < ApplicationController
   # POST /records
   # POST /records.json
   def create
+    pp record_params
     @record = Record.new(record_params)
 
     respond_to do |format|

@@ -91,4 +91,7 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  # Log rotation
+  config.logger = Logger.new('log/production.log', 10, 10 * 1024 * 1024)
 end
